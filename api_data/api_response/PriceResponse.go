@@ -15,5 +15,13 @@ type DailyPriceResponse struct {
 }
 
 type IntradayPriceResponse struct {
-	Item map[string]values `json:"Time Series (Daily)"`
+	Item map[string]values `json:"Time Series (1min)"`
+}
+
+type WeeklyPriceResponse struct {
+	Item map[string]values `json:"Weekly Time Series"`
+}
+
+type MonthlyPriceResponse struct {
+	Item map[string]values `json:"Monthly Time Series"`
 }
