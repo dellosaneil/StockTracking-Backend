@@ -5,6 +5,7 @@ import (
 
 	"github.com/dellosaneil/stocktracking-backend/api_data/api_get"
 	"github.com/dellosaneil/stocktracking-backend/constants"
+	"github.com/dellosaneil/stocktracking-backend/indicators"
 )
 
 func main() {
@@ -12,8 +13,11 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	for _, q := range s {
-		fmt.Println(q.Open)
+	var o []float64
+	for _, price := range s {
+		o = append(o, price.Open)
 	}
+
+	fmt.Println(indicators.SimpleMovingAverage(o, 3))
 
 }
