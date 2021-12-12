@@ -2,19 +2,20 @@ package api_get
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
 	"strconv"
 
-	"github.com/dellosaneil/stocktracking-backend/api_response"
+	"github.com/dellosaneil/stocktracking-backend/api_data/api_response"
 	"github.com/dellosaneil/stocktracking-backend/model"
 	"github.com/dellosaneil/stocktracking-backend/util"
 )
 
-func GetPriceCall() ([]model.PriceModel, error) {
+func GetPriceCall(stockTicker string, timeSeries string) ([]model.PriceModel, error) {
 	var price []model.PriceModel
-	response, errApi := http.Get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo")
+	response, errApi := http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&symbol=%s&apikey=90ZLSXISLFOGZIJO", stockTicker, timeSeries))
 
 	if errApi != nil {
 		return price, errApi
@@ -24,6 +25,18 @@ func GetPriceCall() ([]model.PriceModel, error) {
 		return price, err
 	}
 	var ts api_response.DailyPriceResponse
+	// switch timeSeries {
+	// case constants.DAILY:
+	// 	api_response.DailyPriceResponse
+	// case constants.INTRADAY:
+	// 	api_response.IntradayPriceResponse
+	// case constants.WEEKLY:
+	// 	api_response.WeeklyPriceResponse
+	// case constants.MONTHLY:
+	// 	api_response.MonthlyPriceResponse
+	// default:
+	// 	api_response.DailyPriceResponse
+	// }
 	err = json.Unmarshal(contents, &ts)
 	if err != nil {
 		return price, err
@@ -52,7 +65,5 @@ func GetPriceCall() ([]model.PriceModel, error) {
 		}
 		price = append(price, tempPrice)
 	}
-
 	return price, nil
-
 }
