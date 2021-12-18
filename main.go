@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 
-	"github.com/dellosaneil/stocktracking-backend/api_data/api_get"
+	"github.com/dellosaneil/stocktracking-backend/api/api_get"
 	"github.com/dellosaneil/stocktracking-backend/constants"
 	"github.com/dellosaneil/stocktracking-backend/indicators"
 )
 
 func main() {
-	s, err := api_get.GetPriceCall(constants.DAILY, "TSLA")
+	s, err := api_get.GetPriceCall("TSLA", constants.WEEKLY)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -18,6 +18,6 @@ func main() {
 		o = append(o, price.Open)
 	}
 
-	fmt.Println(indicators.SimpleMovingAverage(o, 3))
+	fmt.Println(indicators.SimpleMovingAverage(o, 50))
 
 }
