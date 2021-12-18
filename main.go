@@ -9,15 +9,15 @@ import (
 )
 
 func main() {
-	s, err := api_get.GetPriceCall("TSLA", constants.WEEKLY)
+	s, err := api_get.GetPriceCall("TSLA", constants.DAILY)
 	if err != nil {
 		fmt.Println(err)
 	}
 	var o []float64
 	for _, price := range s {
-		o = append(o, price.Open)
+		o = append(o, price.Close)
 	}
 
-	fmt.Println(indicators.SimpleMovingAverage(o, 50))
+	indicators.ExponentialMovingAverage(o, 14)
 
 }
