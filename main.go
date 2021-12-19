@@ -18,6 +18,9 @@ func main() {
 		o = append(o, price.Close)
 	}
 
-	indicators.ExponentialMovingAverage(o, 14)
+	test := indicators.MovingAverageConvergenceDivergence(o, 12, 26, 9)
+	for _, t := range test {
+		fmt.Println(t)
+	}
 
 }
