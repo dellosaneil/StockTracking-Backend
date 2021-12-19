@@ -1,8 +1,7 @@
 package indicators
 
 import (
-	"fmt"
-
+	"github.com/dellosaneil/stocktracking-backend/model"
 	"github.com/dellosaneil/stocktracking-backend/util"
 )
 
@@ -38,8 +37,32 @@ func ExponentialMovingAverage(prices []float64, period int) []float64 {
 	ema = append(ema, previousEma)
 	for index := period; index < len(prices); index++ {
 		previousEma = util.RoundPrecision((float64(k)*(prices[index]-previousEma))+previousEma, 4)
-		fmt.Println(previousEma)
 		ema = append(ema, previousEma)
 	}
 	return ema
+}
+
+func MovingAverageConvergenceDivergence(prices []float64, fastPeriod int, slowPeriod int, signalPeriod int) []model.MACD {
+	fastSlowGap := slowPeriod - fastPeriod
+	fastPeriodEma := ExponentialMovingAverage(prices, fastPeriod)
+	slowPeriodEma := ExponentialMovingAverage(prices, slowPeriod)
+	var macd []model.MACD
+	var macdValues []float64
+	var histogramValues []float64
+	for index := 0; index < len(slowPeriodEma); index++ {
+		s := util.RoundPrecision(fastPeriodEma[index+fastSlowGap]-slowPeriodEma[index], 4)
+		macdValues = append(macdValues, s)
+	}
+	signalValues := ExponentialMovingAverage(macdValues, signalPeriod)
+	for index := 0; index < len(signalValues); index++ {
+		histogram := util.RoundPrecision(macdValues[index+(signalPeriod-1)]-signalValues[index], 4)
+		histogramValues = append(histogramValues, histogram)
+	}
+	for index := 0; index < len(signalValues); index++ {
+		macd = append(macd, model.MACD{
+			macdValues[index+(signalPeriod-1)],
+			signalValues[index],
+			histogramValues[index]})
+	}
+	return macd
 }
