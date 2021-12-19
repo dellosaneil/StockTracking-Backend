@@ -14,7 +14,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	test := indicators.StochasticOscillator(s, 5, 3, 3)
+	test := indicators.StochasticOscillator(s, 7, 5, 6)
 	for _, t := range test {
 		fmt.Println(t)
 	}
