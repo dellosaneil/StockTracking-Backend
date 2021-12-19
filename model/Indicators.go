@@ -5,3 +5,8 @@ type MACD struct {
 	SignalLine float64
 	Histogram  float64
 }
+
+type StochasticOscillator struct {
+	SlowK float64
+	SlowD float64
+}

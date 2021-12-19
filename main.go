@@ -13,14 +13,12 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var o []float64
-	for _, price := range s {
-		o = append(o, price.Close)
-	}
 
-	test := indicators.MovingAverageConvergenceDivergence(o, 12, 26, 9)
+	test := indicators.StochasticOscillator(s, 5, 3, 3)
 	for _, t := range test {
 		fmt.Println(t)
 	}
+
+	// indicators.StochasticOscillator(s, 5, 3, 3)
 
 }
