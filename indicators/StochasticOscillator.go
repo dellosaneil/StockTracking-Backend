@@ -19,7 +19,7 @@ func StochasticOscillator(prices []model.PriceModel, fastKPeriod int, slowKPerio
 		prepareForKValue = append(prepareForKValue, preK)
 	}
 	for index := slowDPeriod; index < len(prepareForKValue); index++ {
-		k := calculateDValue(prepareForKValue[index-slowDPeriod+1 : index+1])
+		k := calculateDValue(prepareForKValue[index-slowKPeriod+1 : index+1])
 		kValues = append(kValues, k)
 	}
 	for index := slowDPeriod; index < len(kValues); index++ {
