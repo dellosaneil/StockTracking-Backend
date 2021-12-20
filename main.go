@@ -13,12 +13,10 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	test := indicators.StochasticOscillator(s, 7, 5, 6)
-	for _, t := range test {
-		fmt.Println(t)
+	var prices []float64
+	for _, price := range s {
+		prices = append(prices, price.Close)
 	}
 
-	// indicators.StochasticOscillator(s, 5, 3, 3)
-
+	indicators.RelativeStrengthIndex(prices, 14)
 }
