@@ -6,4 +6,5 @@ type PriceModel struct {
 	Low    float64
 	Close  float64
 	Volume int64
+	Time   string
 }

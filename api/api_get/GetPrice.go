@@ -16,8 +16,7 @@ import (
 
 func GetPriceCall(stockTicker string, timeSeries string) ([]model.PriceModel, error) {
 	var price []model.PriceModel
-	response, errApi := http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&outputsize=full&symbol=%s&apikey=90ZLSXISLFOGZIJO", timeSeries, stockTicker))
-
+	response, errApi := http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&outputsize=full&interval=1min&symbol=%s&apikey=90ZLSXISLFOGZIJO", timeSeries, stockTicker))
 	if errApi != nil {
 		return price, errApi
 	}
@@ -51,7 +50,7 @@ func GetPriceCall(stockTicker string, timeSeries string) ([]model.PriceModel, er
 			util.RoundPrecision(low, 4),
 			util.RoundPrecision(close, 4),
 			volume,
-		}
+			t}
 		price = append(price, tempPrice)
 	}
 	return price, nil
