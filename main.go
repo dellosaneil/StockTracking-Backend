@@ -9,14 +9,9 @@ import (
 )
 
 func main() {
-	s, err := api_get.GetPriceCall("TSLA", constants.DAILY)
+	s, err := api_get.GetPriceCall("TSLA", constants.INTRADAY)
 	if err != nil {
 		fmt.Println(err)
 	}
-	var prices []float64
-	for _, price := range s {
-		prices = append(prices, price.Close)
-	}
-
-	indicators.RelativeStrengthIndex(prices, 14)
+	indicators.VolumnWeightedAveragePrice(s)
 }
