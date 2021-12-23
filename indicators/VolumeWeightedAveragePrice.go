@@ -6,7 +6,7 @@ import (
 )
 
 // currently default to 1 min, can only be intraday
-func VolumnWeightedAveragePrice(prices []model.PriceModel) []float64 {
+func VolumeWeightedAveragePrice(prices []model.PriceModel) []float64 {
 	previousDate := prices[0].Time[0:10]
 	var volumnWeightedAveragePrice []float64
 	volumeSummation := float64(0)

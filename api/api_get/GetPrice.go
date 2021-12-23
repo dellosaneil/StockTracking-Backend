@@ -16,7 +16,10 @@ import (
 
 func GetPriceCall(stockTicker string, timeSeries string) ([]model.PriceModel, error) {
 	var price []model.PriceModel
-	response, errApi := http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&outputsize=full&interval=1min&symbol=%s&apikey=90ZLSXISLFOGZIJO", timeSeries, stockTicker))
+	response, errApi := http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&outputsize=full&symbol=%s&apikey=90ZLSXISLFOGZIJO", timeSeries, stockTicker))
+	if timeSeries == constants.INTRADAY {
+		response, errApi = http.Get(fmt.Sprintf("https://www.alphavantage.co/query?function=%s&outputsize=full&interval=1min&symbol=%s&apikey=90ZLSXISLFOGZIJO", timeSeries, stockTicker))
+	}
 	if errApi != nil {
 		return price, errApi
 	}

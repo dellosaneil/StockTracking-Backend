@@ -1,17 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/dellosaneil/stocktracking-backend/api/api_get"
-	"github.com/dellosaneil/stocktracking-backend/constants"
-	"github.com/dellosaneil/stocktracking-backend/indicators"
+	"github.com/dellosaneil/stocktracking-backend/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	s, err := api_get.GetPriceCall("TSLA", constants.INTRADAY)
-	if err != nil {
-		fmt.Println(err)
-	}
-	indicators.VolumnWeightedAveragePrice(s)
+	r := mux.NewRouter()
+	handlers.HandleRoutes(r)
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

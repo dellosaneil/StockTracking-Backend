@@ -26,7 +26,7 @@ func movingAverageCalculation(prices []float64, period int) float64 {
 	for _, price := range prices {
 		total += price
 	}
-	return util.RoundPrecision((float64(total) / float64(period)), 4)
+	return (float64(total) / float64(period))
 }
 
 func ExponentialMovingAverage(prices []float64, period int) []float64 {
