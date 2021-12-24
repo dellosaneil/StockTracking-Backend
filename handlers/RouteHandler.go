@@ -10,6 +10,7 @@ import (
 	"github.com/dellosaneil/stocktracking-backend/constants"
 	"github.com/dellosaneil/stocktracking-backend/indicators"
 	"github.com/dellosaneil/stocktracking-backend/util"
+	"github.com/dellosaneil/stocktracking-backend/websockets"
 	"github.com/gorilla/mux"
 )
 
@@ -21,6 +22,7 @@ func HandleRoutes(router *mux.Router) {
 	router.HandleFunc("/api/indicator/rsi", relativeStrengthIndex).Methods("GET")
 	router.HandleFunc("/api/indicator/stochastic", stochasticOscillator).Methods("GET")
 	router.HandleFunc("/api/indicator/vwap", volumeWeightedAveragePrice).Methods("GET")
+	router.HandleFunc("/api/price/liveprice", livePrice)
 }
 
 func retrievePrice(w http.ResponseWriter, r *http.Request) {
@@ -168,4 +170,15 @@ func volumeWeightedAveragePrice(w http.ResponseWriter, r *http.Request) {
 	}
 	sma := indicators.VolumeWeightedAveragePrice(prices)
 	json.NewEncoder(w).Encode(sma)
+}
+
+func livePrice(w http.ResponseWriter, r *http.Request) {
+	urlParams := r.URL.Query()
+	ticker := urlParams["stockTicker"][0]
+	timeSeries := urlParams["timeseries"][0]
+	ws, err := websockets.LivePriceUpgrade(w, r)
+	if err != nil {
+		panic(err)
+	}
+	go websockets.LivePriceWriter(ws, ticker, timeSeries)
 }
