@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>YouTube Subscribers</h2>
+      <h1 id="subs"></h1>
+    </div>
+
+    <script>
+      let subscribers = {};
+      const websocketPrice = new WebSocket("ws://localhost:8080/api/websocket/price?stockTicker=IBM&timeseries=TIME_SERIES_INTRADAY");
+      const websocketSMA = new WebSocket("ws://localhost:8080/api/websocket/indicator/vwap");
+
+      websocketPrice.onopen = function(event) {
+        console.log("Successfully connected to websocket server PRICE");
+      };
+
+      websocketPrice.onerror = function(error) {
+        console.log("Error connecting to websocket server PRICE");
+        console.log(error);
+      };
+
+      websocketSMA.onopen = function(event) {
+        console.log("Successfully connected to websocket server INDICATOR");
+      };
+
+      websocketSMA.onerror = function(error) {
+        console.log("Error connecting to websocket server INDICATOR");
+        console.log(error);
+      };
+
+      websocketSMA.onmessage = function(event) {
+        subscribers = JSON.parse(event.data);
+        document.getElementById("subs").innerText =
+          subscribers.at(-1)
+      };
+    </script>
+  </body>
+</html>

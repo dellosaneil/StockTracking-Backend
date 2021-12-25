@@ -1,4 +1,4 @@
-package websockets
+package ws_price
 
 import (
 	"encoding/json"
@@ -7,29 +7,33 @@ import (
 	"time"
 
 	"github.com/dellosaneil/stocktracking-backend/api/api_get"
+	"github.com/dellosaneil/stocktracking-backend/model"
 	"github.com/gorilla/websocket"
 )
 
-var livePriceUpgrader = websocket.Upgrader{
+var wsPriceUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
-func LivePriceUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
-	livePriceUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	ws, err := livePriceUpgrader.Upgrade(w, r, nil)
+var WSStockPrice []model.PriceModel
+
+func WSPriceUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
+	wsPriceUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	ws, err := wsPriceUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return ws, err
 	}
 	return ws, nil
 }
 
-func LivePriceWriter(conn *websocket.Conn, stockTicker string, timeseries string) {
+func WSPriceWriter(conn *websocket.Conn, stockTicker string, timeseries string) {
 	for {
 		ticker := time.NewTicker(5 * time.Second)
 		for t := range ticker.C {
 			fmt.Println(t)
 			prices, err := api_get.GetPriceCall(stockTicker, timeseries)
+			WSStockPrice = prices
 			if err != nil {
 				panic(err)
 			}
