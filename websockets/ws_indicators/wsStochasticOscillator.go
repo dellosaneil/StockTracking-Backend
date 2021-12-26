@@ -14,10 +14,10 @@ import (
 var wsStochasticOscillatorUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func WSStochasticOscillatorUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
-	wsStochasticOscillatorUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := wsStochasticOscillatorUpgrader.Upgrade(w, r, nil)
 
 	if err != nil {
@@ -31,15 +31,15 @@ func WSStochasticOscillatorWriter(conn *websocket.Conn, fastKPeriod, slowKPeriod
 		ticker := time.NewTicker(5 * time.Second)
 		for t := range ticker.C {
 			fmt.Println(t)
-			if len(ws_price.WSStockPrice) == 0 {
-				continue
+			if len(ws_price.WSStockPrice) > 0 {
+				rsi := indicators.StochasticOscillator(ws_price.WSStockPrice, fastKPeriod, slowKPeriod, slowDPeriod)
+				jsonString, _ := json.Marshal(rsi)
+				if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
+					fmt.Println(err1)
+					return
+				}
 			}
-			rsi := indicators.StochasticOscillator(ws_price.WSStockPrice, fastKPeriod, slowKPeriod, slowDPeriod)
-			jsonString, _ := json.Marshal(rsi)
-			if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
-				panic(err1)
-				return
-			}
+
 		}
 	}
 }

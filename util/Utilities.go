@@ -5,6 +5,7 @@ import (
 
 	"github.com/dellosaneil/stocktracking-backend/constants"
 	"github.com/dellosaneil/stocktracking-backend/model"
+	"github.com/gorilla/websocket"
 )
 
 func RoundPrecision(floatNumber float64, precision int) float64 {
@@ -40,4 +41,14 @@ func PriceType(prices []model.PriceModel, pricetype string) []float64 {
 		}
 	}
 	return price
+}
+
+func CloseWebSocketConnection(conn *websocket.Conn) {
+	for {
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			conn.Close()
+			break
+		}
+	}
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/dellosaneil/stocktracking-backend/api/api_get"
 	"github.com/dellosaneil/stocktracking-backend/constants"
+	"github.com/dellosaneil/stocktracking-backend/util"
 	"github.com/dellosaneil/stocktracking-backend/websockets/ws_indicators"
 	"github.com/dellosaneil/stocktracking-backend/websockets/ws_price"
 	"github.com/gorilla/mux"
@@ -58,6 +59,7 @@ func wsPrice(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_price.WSPriceWriter(ws, ticker, timeSeries)
+	go util.CloseWebSocketConnection(ws)
 }
 
 func wsSimpleMovingAverage(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +87,7 @@ func wsSimpleMovingAverage(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_indicators.WSSimpleMovingAverageWriter(ws, periodInt, priceType)
+	go util.CloseWebSocketConnection(ws)
 }
 
 func wsExponentialMovingAverage(w http.ResponseWriter, r *http.Request) {
@@ -112,6 +115,7 @@ func wsExponentialMovingAverage(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_indicators.WSExponentialMovingAverageWriter(ws, periodInt, priceType)
+	go util.CloseWebSocketConnection(ws)
 }
 
 func wsMovingAverageConvergenceDivergence(w http.ResponseWriter, r *http.Request) {
@@ -159,6 +163,7 @@ func wsMovingAverageConvergenceDivergence(w http.ResponseWriter, r *http.Request
 		panic(err)
 	}
 	go ws_indicators.WSMovingAverageConvergenceDivergenceWriter(ws, fastPeriodInt, slowPeriodInt, signalPeriodInt, priceType)
+	go util.CloseWebSocketConnection(ws)
 }
 
 func wsRelativeStrengthIndex(w http.ResponseWriter, r *http.Request) {
@@ -186,6 +191,7 @@ func wsRelativeStrengthIndex(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_indicators.WSRelativeStrengthIndexWriter(ws, periodInt, priceType)
+	go util.CloseWebSocketConnection(ws)
 }
 
 func wsStochasticOscillator(w http.ResponseWriter, r *http.Request) {
@@ -227,6 +233,7 @@ func wsStochasticOscillator(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_indicators.WSStochasticOscillatorWriter(ws, fastKPeriodInt, slowKPeriodInt, slowDPeriodInt)
+	go util.CloseWebSocketConnection(ws)
 
 }
 
@@ -236,4 +243,5 @@ func wsVolumeWeightedAveragePrice(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	go ws_indicators.WSVolumeWeightedAveragePriceWriter(ws)
+	go util.CloseWebSocketConnection(ws)
 }
