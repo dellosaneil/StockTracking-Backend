@@ -3,6 +3,7 @@ package util
 import (
 	"math"
 
+	"github.com/dellosaneil/stocktracking-backend/constants"
 	"github.com/dellosaneil/stocktracking-backend/model"
 )
 
@@ -21,19 +22,19 @@ func Sum(array []float64) float64 {
 func PriceType(prices []model.PriceModel, pricetype string) []float64 {
 	var price []float64
 	switch pricetype {
-	case "open":
+	case constants.OPEN:
 		for _, p := range prices {
 			price = append(price, p.Open)
 		}
-	case "close":
+	case constants.CLOSE:
 		for _, p := range prices {
 			price = append(price, p.Close)
 		}
-	case "low":
+	case constants.LOW:
 		for _, p := range prices {
 			price = append(price, p.Low)
 		}
-	case "high":
+	case constants.HIGH:
 		for _, p := range prices {
 			price = append(price, p.High)
 		}
