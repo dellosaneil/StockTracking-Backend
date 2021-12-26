@@ -14,12 +14,11 @@ import (
 var wsVolumeWeightedAveragePriceUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func WSVolumeWeightedAveragePriceUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
-	wsVolumeWeightedAveragePriceUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := wsVolumeWeightedAveragePriceUpgrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		return ws, err
 	}
@@ -29,16 +28,14 @@ func WSVolumeWeightedAveragePriceUpgrade(w http.ResponseWriter, r *http.Request)
 func WSVolumeWeightedAveragePriceWriter(conn *websocket.Conn) {
 	for {
 		ticker := time.NewTicker(5 * time.Second)
-		for t := range ticker.C {
-			fmt.Println(t)
-			if len(ws_price.WSStockPrice) == 0 {
-				continue
-			}
-			rsi := indicators.VolumeWeightedAveragePrice(ws_price.WSStockPrice)
-			jsonString, _ := json.Marshal(rsi)
-			if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
-				panic(err1)
-				return
+		for range ticker.C {
+			if len(ws_price.WSStockPrice) > 0 {
+				vwap := indicators.VolumeWeightedAveragePrice(ws_price.WSStockPrice)
+				jsonString, _ := json.Marshal(vwap)
+				if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
+					fmt.Println(err1)
+					return
+				}
 			}
 		}
 	}

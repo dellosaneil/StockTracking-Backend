@@ -15,10 +15,10 @@ import (
 var wsSimpleMovingAverageUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func WSSimpleMovingAverageUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
-	wsSimpleMovingAverageUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := wsSimpleMovingAverageUpgrader.Upgrade(w, r, nil)
 
 	if err != nil {
@@ -33,16 +33,14 @@ func WSSimpleMovingAverageWriter(conn *websocket.Conn, period int, priceType str
 		for t := range ticker.C {
 			fmt.Println(t)
 			prices := util.PriceType(ws_price.WSStockPrice, priceType)
-			fmt.Println(prices)
-			if len(prices) == 0 {
-				continue
-			}
-			fmt.Println("shouldnt")
-			sma := indicators.SimpleMovingAverage(prices, period)
-			jsonString, _ := json.Marshal(sma)
-			if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
-				panic(err1)
-				return
+			if len(prices) > 0 {
+				fmt.Println("shouldnt")
+				sma := indicators.SimpleMovingAverage(prices, period)
+				jsonString, _ := json.Marshal(sma)
+				if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
+					fmt.Println(err1)
+					return
+				}
 			}
 		}
 	}

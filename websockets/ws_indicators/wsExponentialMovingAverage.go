@@ -15,12 +15,11 @@ import (
 var wsExponentialMovingAverageUpgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 func WSExponentialMovingAverageUpgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
-	wsExponentialMovingAverageUpgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, err := wsExponentialMovingAverageUpgrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		return ws, err
 	}
@@ -33,14 +32,13 @@ func WSExponentialMovingAverageWriter(conn *websocket.Conn, period int, priceTyp
 		for t := range ticker.C {
 			fmt.Println(t)
 			prices := util.PriceType(ws_price.WSStockPrice, priceType)
-			if len(prices) == 0 {
-				continue
-			}
-			ema := indicators.ExponentialMovingAverage(prices, period)
-			jsonString, _ := json.Marshal(ema)
-			if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
-				panic(err1)
-				return
+			if len(prices) > 0 {
+				ema := indicators.ExponentialMovingAverage(prices, period)
+				jsonString, _ := json.Marshal(ema)
+				if err1 := conn.WriteMessage(websocket.TextMessage, []byte(jsonString)); err1 != nil {
+					fmt.Println(err1)
+					return
+				}
 			}
 		}
 	}
